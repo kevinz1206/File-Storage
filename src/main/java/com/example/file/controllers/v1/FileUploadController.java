@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class FileUploadController {
-    String test = "aaa";
     private final StorageService storageService;
     @Autowired
     public FileUploadController(StorageService storageService){
@@ -21,8 +20,10 @@ public class FileUploadController {
     @PostMapping("/")
     public String handleFileUpload(@RequestParam("test") MultipartFile file) {
         storageService.store(file);
-        String filename = file.getOriginalFilename();
-        return filename;
+        FileMetadata
+
+//        String filename = file.getOriginalFilename();
+//        return filename;
     }
     @GetMapping("/files/{filename:.+}")
     public ResponseEntity<Resource> serveFileByName(@PathVariable String filename) {
