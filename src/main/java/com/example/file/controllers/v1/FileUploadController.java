@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class FileUploadController {
 
+    private String testbrach;
     private final StorageService storageService;
     @Autowired
     public FileUploadController(StorageService storageService){
