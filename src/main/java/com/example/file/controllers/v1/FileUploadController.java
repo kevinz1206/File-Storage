@@ -1,32 +1,43 @@
 package com.example.file.controllers.v1;
 
+import com.example.file.domain.FileMetadata;
+import com.example.file.services.FetchMetadataService;
+import com.example.file.services.MetadataService;
 import com.example.file.services.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
+@RequestMapping("/files")
 public class FileUploadController {
     private final StorageService storageService;
-    String a = "aaaaaaaaaaaa";
     @Autowired
     public FileUploadController(StorageService storageService){
         this.storageService = storageService;
     }
+    @Autowired
+    private FetchMetadataService fetchMetadataService;
+    @Autowired
+    private MetadataService metadataService;
 
     @PostMapping("/")
-    public String handleFileUpload(@RequestParam("test") MultipartFile file) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public String handleFileUpload(@RequestParam("file") MultipartFile file) {
         storageService.store(file);
-        FileMetadata
-
-//        String filename = file.getOriginalFilename();
-//        return filename;
+        FileMetadata fileMetadata = fetchMetadataService.fetchMetadata(file);
+        System.out.println(fileMetadata.getName());
+        System.out.println(fileMetadata.getSize());
+        System.out.println(fileMetadata.getUploadTime());
+        metadataService.saveFileMetadata(fileMetadata);
+        return file.getOriginalFilename();
     }
-    @GetMapping("/files/{filename:.+}")
+    @GetMapping("/{filename:.+}")
     public ResponseEntity<Resource> serveFileByName(@PathVariable String filename) {
 
         Resource file = storageService.loadAsResource(filename);
